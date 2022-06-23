@@ -59,7 +59,7 @@ solvers
 
 SIMPLE
 {
-    nNonOrthogonalCorrectors 0;
+    nNonOrthogonalCorrectors 1;
     consistent yes;
 }
 
@@ -74,7 +74,7 @@ relaxationFactors
     {
         p               0.3;
         U               0.5;
-        k               0.5;
+        k               0.3;
         "(epsilon|omega)" 0.5;
     }
 }

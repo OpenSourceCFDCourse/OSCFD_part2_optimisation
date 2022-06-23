@@ -22,27 +22,25 @@ ddtSchemes
 gradSchemes
 {
     default         Gauss linear;
+    grad(p)         Gauss linear;
+    grad(U)         cellLimited Gauss linear 1;
 }
 
 divSchemes
 {
-    default         none;
+    default          none;
 
-    div(phi,U)      bounded Gauss upwind;
+    div(phi,U)       bounded Gauss upwind;//bounded Gauss linearUpwind grad(U);
 
-    turbulence      bounded Gauss upwind;
-    div(phi,k)      $turbulence;
+    turbulence       bounded Gauss upwind;
+    div(phi,k)       $turbulence;
+    div(phi,omega)   $turbulence;
+    div(phi,nuTilda) $turbulence;
     div(phi,epsilon) $turbulence;
-    div(phi,omega)  $turbulence;
-    div(phi,R)      $turbulence;
-    div(R)          $turbulence;
+    div(phi,phit)    $turbulence;
+    div(phi,f)       $turbulence;
 
-    div((nuEff*dev2(T(grad(U)))))   Gauss linear;
-}
-
-laplacianSchemes
-{
-    default         Gauss linear corrected;
+    div((nuEff*dev2(T(grad(U))))) Gauss linear;
 }
 
 interpolationSchemes
@@ -50,21 +48,19 @@ interpolationSchemes
     default         linear;
 }
 
+laplacianSchemes
+{
+    default         Gauss linear limited 0.333;
+}
+
 snGradSchemes
 {
-    default         corrected ;
+    default         limited 0.333;
 }
 
-oversetInterpolation
+wallDist
 {
-    method          inverseDistance;
-}
-
-fluxRequired
-{
-    default         no;
-    pcorr           ;
-    p               ;
+    method          meshWave;
 }
 
 

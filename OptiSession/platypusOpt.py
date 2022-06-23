@@ -44,16 +44,17 @@ def runCase(X):
     
     os.chdir(caseName)
     
-    ct.replace('createGeo.py.tmp','createGeo.py',tokens=["{x1}","{y1}","{x2}","{y2}","{weight}"],values=[x1,y1,x2,y2,weight])
-    ct.replace('system/meshDict.tmp','system/meshDict',tokens=["{x1}","{y1}","{x2}","{y2}"],values=[x1,y1,x2,y2])
+    tokens=["{x1}","{y1}","{x2}","{y2}","{weight}"]
+    values=[x1,y1,x2,y2,weight]
+    ct.replace('createbaffle.py.tmp','createbaffle.py',tokens=tokens,values=values)
     
-    cp = ct.execute('freecadcmd -c createGeo.py', capture_output=True, shell=True)
+    cp = ct.execute('freecadcmd -c createbaffle.py', capture_output=True, shell=True)
     checkCommand(cp)
     
     cp = ct.execute('sleep 1', capture_output=True, shell=True)
     checkCommand(cp)
     
-    cp = ct.execute('cd STL && ./renameSTL.sh', capture_output=True, shell=True)
+    cp = ct.execute('cd STL && bash renameSTL.sh', capture_output=True, shell=True)
     checkCommand(cp)
     
     cp = ct.execute('surfaceToFMS STL/joined.stl', capture_output=True, shell=True)
@@ -65,7 +66,7 @@ def runCase(X):
     cp = ct.execute('export OMP_NUM_THREADS=1 && cartesian2DMesh', capture_output=True, shell=True)
     checkCommand(cp)
 
-    cp = ct.execute('transformPoints -scale "(0.001 0.001 0.001)"', capture_output=True, shell=True)
+    cp = ct.execute('transformPoints -scale 0.001', capture_output=True, shell=True)
     checkCommand(cp)
 
     cp = ct.execute('cp -r 0.orig 0', capture_output=True, shell=True)
@@ -81,13 +82,12 @@ def runCase(X):
         checkCommand(cp)
     except:
         print('Failed to run case will discard')
-        uniU = 1000
+        uniU = -1000
         avgP = 1000
     
     else:
-        #Minimize problem so multiply with -1
-        uniU = np.mean(np.loadtxt('./postProcessing/maxU/0/surfaceFieldValue.dat',comments='#',usecols=(1,),unpack=True)[-10:])
-        avgP = np.mean(np.loadtxt('./postProcessing/pInlet/0/surfaceFieldValue.dat',comments='#',usecols=(1,),unpack=True)[-10:])
+        uniU = np.mean(np.loadtxt('./postProcessing/outletUniformity/0/surfaceFieldValue.dat',comments='#',usecols=(1,),unpack=True)[-10:])
+        avgP = np.mean(np.loadtxt('./postProcessing/pDrop/0/surfaceFieldValue.dat',comments='#',usecols=(1,),unpack=True)[-10:])
     
     
     finally:
@@ -100,6 +100,7 @@ def runCase(X):
                 csvf.writerow([caseName, x1, y1, x2, y2, weight, uniU, avgP])
     
     CASECOUNT+=1
+
     return [uniU,avgP]
     
 # House keeping folder and files
@@ -143,10 +144,12 @@ problem.types[3] = Integer(y2Lower, y2Upper)
 problem.types[4] = Integer(weightLower, weightUpper)
 
 problem.function = runCase
+algorithm = NSGAII(problem,population_size=5)
+algorithm.run(1)
 
-with ProcessPoolEvaluator(2) as evaluator:
-    algorithm = NSGAII(problem, population_size=5, evaluator=evaluator)
-    algorithm.run(40)
+#with ProcessPoolEvaluator(2) as evaluator:
+#    algorithm = NSGAII(problem, population_size=5, evaluator=evaluator)
+#    algorithm.run(40)
     
 for solution in algorithm.result:
     print(solution.objectives)

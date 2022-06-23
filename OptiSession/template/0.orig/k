@@ -36,7 +36,7 @@ boundaryField
     "wall.*"
     {
         type            kqRWallFunction;
-        value           $internalField;
+        value           uniform 1e-06;
     }
 
     "empty.*"
