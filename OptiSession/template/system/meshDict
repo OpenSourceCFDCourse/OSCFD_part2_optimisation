@@ -1,0 +1,86 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                |
+| \\      /  F ield         | cfMesh: A library for mesh generation          |
+|  \\    /   O peration     |                                                |
+|   \\  /    A nd           | Author: Franjo Juretic                         |
+|    \\/     M anipulation  | E-mail: franjo.juretic@c-fields.com            |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version   2.0;
+    format    ascii;
+    class     dictionary;
+    location  "system";
+    object    meshDict;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+surfaceFile "STL/joined2.fms";
+
+//minCellSize 1.0;
+
+maxCellSize 5.0;
+
+//boundaryCellSize 5.0;
+
+localRefinement
+{
+    "wallBaffle.*"
+    {
+        //cellSize 1;
+        additionalRefinementLevels      1;
+        refinementThickness             10;
+    }
+}
+
+boundaryLayers
+{
+    optimiseLayers  1;
+//    thicknessRatio 1.1;
+//    maxFirstLayerThickness 0.5;
+
+    patchBoundaryLayers
+    {
+        "wall.*"
+        {
+            nLayers         5;
+            thicknessRatio  1.15;
+        }
+        "wallBaffle.*"
+        {
+            nLayers         10;
+            thicknessRatio  1.3;
+        }
+    }
+}
+
+renameBoundary
+{
+    defaultName     emptyTopBottom;
+    defaultType     empty;
+
+    newPatchNames
+    {
+        "inlet.*"
+        {
+            type    patch;
+            newName inlet;
+        }
+
+        "outlet.*"
+        {
+            type    patch;
+            newName outlet;
+        }
+        "wall.*"
+        {
+            type    wall;
+            newName walls;
+        }
+
+    }
+}
+
+
+// ************************************************************************* //
