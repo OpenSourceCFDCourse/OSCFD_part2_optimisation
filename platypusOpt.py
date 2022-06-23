@@ -144,12 +144,12 @@ problem.types[3] = Integer(y2Lower, y2Upper)
 problem.types[4] = Integer(weightLower, weightUpper)
 
 problem.function = runCase
-algorithm = NSGAII(problem,population_size=5)
-algorithm.run(1)
+#algorithm = NSGAII(problem,population_size=5)
+#algorithm.run(1)
 
-#with ProcessPoolEvaluator(2) as evaluator:
-#    algorithm = NSGAII(problem, population_size=5, evaluator=evaluator)
-#    algorithm.run(40)
+with ProcessPoolEvaluator(6) as evaluator:
+    algorithm = NSGAII(problem, population_size=12, evaluator=evaluator)
+    algorithm.run(60)
     
 for solution in algorithm.result:
     print(solution.objectives)

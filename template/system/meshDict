@@ -28,9 +28,8 @@ localRefinement
 {
     "wallBaffle.*"
     {
-        //cellSize 1;
-        additionalRefinementLevels      1;
-        refinementThickness             10;
+        cellSize				   2;
+		refinementThickness		   6;
     }
 }
 
@@ -44,13 +43,13 @@ boundaryLayers
     {
         "wall.*"
         {
-            nLayers         5;
+            nLayers         2;
             thicknessRatio  1.15;
         }
         "wallBaffle.*"
         {
-            nLayers         10;
-            thicknessRatio  1.3;
+            nLayers         2;
+            thicknessRatio  1.15;
         }
     }
 }

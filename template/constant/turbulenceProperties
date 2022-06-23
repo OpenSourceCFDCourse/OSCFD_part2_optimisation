@@ -9,42 +9,20 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volVectorField;
-    object      U;
+    class       dictionary;
+    object      turbulenceProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 1 -1 0 0 0 0];
+simulationType      RAS;
 
-internalField   uniform (0 0 0);
-
-boundaryField
+RAS
 {
-    #includeEtc "caseDicts/setConstraintTypes"
+    RASModel        kOmegaSST;
 
-    inlet
-    {
-        type  fixedValue;
-        value uniform (5 0 0);
-    }
+    turbulence      on;
 
-    outlet
-    {
-        type            inletOutlet;
-        inletValue      $internalField;
-        value           $internalField;
-    }
-
-    "wall.*"
-    {
-        type            noSlip;
-    }
-
-    "empty.*"
-    {
-        type            empty;
-    }
-
+    printCoeffs     on;
 }
 
 
